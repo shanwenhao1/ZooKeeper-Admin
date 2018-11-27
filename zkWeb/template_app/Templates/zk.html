@@ -1,0 +1,96 @@
+<!--继承base.html-->
+{% extends "home.html" %}
+{% load staticfiles %}
+
+
+{% block head_title %} {{ block.super }} {% endblock %}
+
+<style xmlns="http://www.w3.org/1999/html">
+    {% block style %}
+        .navbar-static-top{
+            margin-bottom: 0px !important;
+        }
+        .jumbotron{
+            margin-bottom: 0px;
+            background-color: #4d5a37;
+            color: #FFFFFF;
+        }
+        .navbar-static-mid{
+            margin-bottom: 0px !important;
+        }
+        .content{
+            margin-bottom: 100px;
+            background-color: #4dfa37;
+            color: #000000;
+        }
+        .log{
+            color: #bf23ff;
+        }
+
+        pre {
+            outline: 1px solid black;         {# 在元素周围绘制一条线 #}
+            padding: 5px;
+            margin: 5px;
+        }
+        .string { color: green; }
+        .number { color: darkorange; }
+        .boolean { color: blue; }
+        .null { color: magenta; }
+        .key { color: red; }
+
+    {% endblock %}
+</style>
+
+{% block jumbotron %}
+    <div class="jumbotron">
+        <div class="container">
+            <div class="row">
+
+                {#导入json显示的js#}
+                <script type="text/javascript" src="{% static 'my_static/js/json.js' %}"></script>
+                {# 导入第三方json工具 https://github.com/josdejong/jsoneditor#}
+                <link href="{% static 'static_root/jsoneditor/dist/jsoneditor.min.js' %}" rel="stylesheet" type="text/css">
+                <script type="text/javascript" src="{% static 'static_root/jsoneditor/dist/jsoneditor.min.js' %}"></script>
+                <script type="text/javascript" src="{% static 'static_root/jsoneditor/dist/jsoneditor-minimalist.min.js' %}"></script>
+                <script type="text/javascript" src="{% static 'static_root/jsoneditor/dist/img/jsoneditor-icons.svg' %}"></script>
+{#                <script type="text/javascript" src="{% static 'static_root/jsoneditor/src/js/ace/index.js' %}"></script>#}
+{#                <script type="text/javascript" src="{% static 'static_root/jsoneditor/src/js/assets/jsonlint/jsonlint.js' %}"></script>#}
+
+                {% if request.user.is_authenticated %}
+                    <h2>Welcome {{ request.user }}</h2>
+                    <h3>This is your zk node info</h3>
+                    {% if errMsg %}
+                        <p>{{ errMsg }}</p>
+                    {% else %}
+                        <table class="table">
+                            <tr>
+                                <td></td>
+                                <td>node_id</td>
+                                <td>node_name</td>
+                                <td>node_path</td>
+                            </tr>
+                            {% for node in nodeInfo %}
+                                <tr>
+                                    <td><input id="{{ node.nodeId }}B" type="button" style="background: #ffff00; color: #faaccc" value="+" onclick="jsonDisplay({{ node.nodeInfo }}, '{{ node.nodeId }}')"/></td>
+                                    <td>{{ node.nodeId }}</td>
+                                    <td>{{ node.nodeName }}</td>
+                                    <td>{{ node.nodePath}}</td>
+                                </tr>
+                                <form action="" method="post" style="color: black">
+                                    <tr id="{{ node.nodeId }}"></tr>
+                                    <tr>
+                                        <td></td>
+                                            <td id="{{ node.nodeId }}M"></td>
+                                            <td id="{{ node.nodeId }}D"></td>
+                                        <td></td>
+                                    </tr>
+                                </form>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+                {% else %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

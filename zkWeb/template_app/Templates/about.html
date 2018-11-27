@@ -1,0 +1,32 @@
+<!--继承base.html-->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+<!--block.super继承-->
+{% block head_title %} {{ block.super }} {% endblock %}
+
+<style xmlns="http://www.w3.org/1999/html">
+{% block style %}
+    .navbar-static-end{
+        margin-bottom: 0px !important;
+    }
+    .row{
+        margin-top: -20px;
+        background-color: #4d5a37;
+        color: #e6ff2d;
+        min-height: 436px;
+    }
+{% endblock %}
+</style>
+{% block content %}
+    <div class="row">
+    <h1 class="text-align-center">About ZK</h1>
+        <div class="text-align-center">
+            <p>  ZooKeeper为分布应用提供一致性服务. </p>
+            <p>相对于静态配置服务来说, 它的一大特点是作为配置可以不停机更改配置.
+                <a href="https://baike.baidu.com/item/zookeeper/4836397?fr=aladdin" >详情</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,6 @@
+django
+pymysql
+kazoo
+gevent
+django-crispy-forms
+django-registration-redux

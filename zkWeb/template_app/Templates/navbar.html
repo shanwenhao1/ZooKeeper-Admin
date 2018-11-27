@@ -1,0 +1,54 @@
+{% load staticfiles %}
+<!-- Static navbar -->
+<nav class="navbar navbar-default navbar-static-top">
+  <!--<div class="container-fluid">-->
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{% url '/' %}">ZooKeeper</a><!--Project name-->
+{#      加载图片的方式<a class="navbar-brand" href="/"><img src="{% static 'img/mvp_landing_logo.png' %}"/></a><!--Project name#}
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+          <!--对应的按钮活动两种对应一种url名"contact",另外一种% url 'contact' %-->
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'about' %}">About</a></li>
+        <li><a href="{% url 'contact' %}">Contact</a></li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        {% if request.user.is_authenticated %}
+            <li><a href="{% url 'auth_logout' %}">Logout</a></li>
+            <li><a href="./">Static top <span class="sr-only">(current)</span></a></li>
+{#            {% if request.user.is_authenticated %}#}
+{#            <li><a href="../navbar-fixed-top/">Fixed top</a></li>#}
+        {% else  %}
+            <!---->
+            <!--这种是按钮式进入新网页登入-->
+            <li><a href="{% url 'auth_login' %}">Login</a></li>
+            <!--registration_register根据login.html中url-->
+            <li><a href="{% url 'auth_register' %}">Register</a></li>
+        {% endif %}
+      </ul>
+        <!--not "/accounts/login" in request.get_full_path表示在"/accounts/login"界面上则不显示-->
+{#        {% if not request.user.is_authenticated and not "/accounts/login" in request.get_full_path %}#}
+{#            <!--这种是在原网页上进行输入登录-->#}
+{#            <form class="navbar-form navbar-right" method="POST" action="{% url 'auth_login' %}">{% csrf_token %}#}
+{#                <div class="form-group">#}
+{#                    <input type="text" class="form-control" name="username" placeholder="Username">#}
+{#                </div>#}
+{#                <div class="form-group">#}
+{#                    <!--输入类型为password则会隐蔽输入-->#}
+{#                    <input type="password" class="form-control" name="password" placeholder="Password">#}
+{#                </div>#}
+{#                <button type="submit" class="btn btn-default">login</button>#}
+{#            </form>#}
+{#        {% endif %}#}
+    </div><!--/.nav-collapse -->
+  </div>
+</nav>

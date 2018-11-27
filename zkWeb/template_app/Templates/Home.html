@@ -1,0 +1,89 @@
+<!--继承base.html-->
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+<!--block.super继承-->
+{% block head_title %} {{ block.super }} {% endblock %}
+
+
+<!--这里将其保存在了工作目录下的\css\custom.css文档中, 同时记得在head_css.html中加上<link href="" rel="stylesheet">-->
+<!--.text-align-center{
+    text-align:center;
+}-->
+
+<!--以下配置写在了css\navbar-static-top.css中
+
+在css文件中类似
+.navbar-default .navbar-brand {
+    color: #FFF;
+}
+这样的是调整各个区块的颜色    每次设置css文件后都要运行python manage.py collectstatic来保存设置-->
+<style xmlns="http://www.w3.org/1999/html">
+    {% block style %}
+        .navbar-static-top{
+            margin-bottom: 0px !important;
+        }
+        .jumbotron{
+            margin-bottom: 0px;
+            background-color: #4d5a37;
+            color: #FFFFFF;
+        }
+        .navbar-static-mid{
+            margin-bottom: 0px !important;
+        }
+        .content{
+            margin-bottom: 100px;
+            background-color: #4dfa37;
+            color: #000000;
+        }
+        .log{
+            color: #bf23ff;
+        }
+    {% endblock %}
+</style>
+
+<!--text-align-center为居中模式用法为加class="lead text-align-center"-->
+{% block jumbotron %}
+    <div class="jumbotron">
+        <div class="container">
+            <div class="row">
+                {% block HomeLeft %}
+                    <div class="col-sm-8">
+                        <h1>ZK管理</h1>
+                            <h1> test</h1>
+                        <p>ZK主要是用来支持在线分布式配置文件.</p>
+                        {% if not request.user.is_authenticated %}
+                            <p>
+                                <a class="btn btn-lg btn-primary" href="{% url 'auth_login' %}" role="button">登录</a>
+                            </p>
+                        {% else %}
+                            <p>
+                                <a class="btn btn-lg btn-primary" href="{% url 'zk' %}" role="button">ZK</a>
+                            </p>
+                        {%  endif %}
+                    </div>
+                {% endblock %}
+                <!--空出來一個位置來播放video之類的E:/CloudMusic/MV/梦回还.mp4-->
+                <!--有设置格式的视频<div class="col-sm-4 pull-right" style="background-color: black;height:315px;">-->
+                {% block HomeRight %}
+                    <div class="col-sm-4 pull-right">
+                        <!--<iframe width="560" height="315" src="https://www.youtube.com/embed/dUdbGQ1K8pE" frameborder="0" allowfullscreen></iframe>-->
+                        <!--<video width="500" height="315" controls="controls" src="#" type="video/mp4"></video>-->
+    {#                    width="100%"表示按照百分比进行填充#}
+                        <video width="100%" height="100%" controls="controls">
+                            <source src="{% static 'my_static/video/梦回还.mp4' %}" type="video/mp4">
+                        </video>
+                        <!--图片<img src="" class="img-responsive">-->
+                    </div>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    <div class="content">
+    </div>
+{% endblock %}

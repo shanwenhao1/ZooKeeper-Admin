@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+<style xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+    {% block style %}
+        .navbar-static-end{
+            margin-bottom: 0px !important;
+        }
+        .row1{
+            margin-top: -20px;
+            background-color: #4d5a37;
+            color: #FFF;
+            min-height: 436px;
+        }
+    {% endblock %}
+</style>
+
+
+{% block content %}
+    <div class="row1">
+        {% if title %}
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1 class="{% if title_align_center %}text-align-center{% endif %}" style="color: #e6ff2d">{{ title }}</h1>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <!--col-sm-offset-3表示在前面空3格-->
+            <div class="col-sm-12 text-align-center">
+                <form method='POST' action='' style="color: black">{% csrf_token %}
+                    {{ form|crispy}}
+                    <input type='submit' value='Submit'/>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
