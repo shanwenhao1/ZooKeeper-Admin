@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @Time    : 2018/11/28
+# @Author  : Wenhao Shan
+
 """
 Django settings for zkWeb project.
 
@@ -11,6 +16,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import sys
 import platform
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -109,9 +115,15 @@ DATABASES = {
         'PASSWORD': '123456',
         'HOST': '192.168.1.89',
         'PORT': '3306',
+        # 测试数据库默认编码格式为utf8
+        'TEST_CHARSET': 'utf8',
+        'TEST_COLLATION': 'utf8_general_ci',
     }
 }
 
+# 测试所用
+if 'test' in sys.argv or 'test_coverage' in sys.argv:
+    DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators

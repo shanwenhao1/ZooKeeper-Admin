@@ -4,3 +4,4 @@ kazoo
 gevent
 django-crispy-forms
 django-registration-redux
+requests

@@ -44,7 +44,7 @@ class Node(models.Model):
         verbose_name_plural = "ZK节点管理"
 
     node_id = models.CharField(max_length=36, primary_key=True, default=new_uuid)
-    node_path = models.CharField(max_length=256)
+    node_path = models.CharField(max_length=255, unique=True)
     node_name = models.CharField(max_length=128)
     # 将NodeManager()赋值给模型的objects属性
     objects = NodeManager()

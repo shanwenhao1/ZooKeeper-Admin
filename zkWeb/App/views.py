@@ -16,7 +16,7 @@ from utils.word_check import pass_word_check
 from zkWeb.App.models import User
 from zkWeb.App.form.contact_form import ContactForm
 from zkWeb.settings import EMAIL_HOST_USER
-from zkWeb.App.app_tool.node_tool import get_person_all_node, modify_node, delete_node
+from zkWeb.App.app_tool.node_tool import get_person_all_node, modify_node, delete_node, verify_node_by_path, get_node_by_path
 from zktool.enum.log_enum import DjangoStatus
 from zktool.enum.web_enum import WebErr, WebReq, WebResp
 
@@ -207,4 +207,29 @@ def zk(request):
     context["errMsg"] = ""
     # context["nodeInfo"] = new_node_info
     # 返回采用http返回格式, 方便js解析(判断请求是否成功)
+    return HttpResponse(json.dumps(context))
+
+
+# TODO 将zkAdmin 与查询zk服务分离, zkAdmin只允许内网访问(或者设置白名单)
+def zk_info(request):
+    """
+    获取zk节点信息
+    :param request:
+    :return:
+    """
+    context = dict()
+    user_name = request.POST.get('username')
+    password = request.POST.get('password')
+    zk_path = request.POST.get('zkPath')
+    try:
+        verify_node_by_path(user_name, password, zk_path)
+    except ActionError as e:
+        context["errMsg"] = e.__str__()
+        context["status"] = WebResp.ActionErr
+        return HttpResponse(json.dumps(context))
+    # 获取zk节点信息
+    zk_node = get_node_by_path(zk_path)
+    context["zkData"] = zk_node
+    context["status"] = WebResp.ActionSuccess
+    context["errMsg"] = ""
     return HttpResponse(json.dumps(context))

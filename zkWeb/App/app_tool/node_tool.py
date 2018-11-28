@@ -77,7 +77,7 @@ def verify_node(user_name: str, node_id: str):
     # 验证node归属
     user = User.objects.filter(user_name=user_name).first()
     if not user:
-        log.tag_error(DbStatus.Inquire, "User: %s not Exist In table user", user_name)
+        log.tag_error(DbStatus.Inquire, "User: %s not Exist In table user" % user_name)
         raise ActionError("User error")
     user_id = user.user_id
     all_node = UserNode.objects.filter(user_id=user_id).all()
@@ -87,6 +87,32 @@ def verify_node(user_name: str, node_id: str):
     # 获取node_path
     node_record = Node.objects.get(node_id=node_id)
     return node_record
+
+
+def verify_node_by_path(user_name: str, password: str, node_path: str):
+    """
+    根据user_name和node_path判断用户是否具有对应节点权限
+    :param user_name:
+    :param password:
+    :param node_path:
+    :return:
+    """
+    user = User.objects.filter(user_name=user_name).first()
+    if not user:
+        log.tag_info(DbStatus.Inquire, "User: %s not Exist In table user" % user_name)
+        raise ActionError("User not exist")
+    if user.password != password:
+        raise ActionError("password error")
+    user_id = user.user_id
+    node = Node.objects.get(node_path=node_path)
+    if not node:
+        raise ActionError("Node Path Not Exist")
+    node_id = node.node_id
+    all_user_node = UserNode.objects.filter(user_id=user_id).all()
+    all_node_id = [user_node.node_id for user_node in all_user_node]
+    if node_id not in all_node_id:
+        raise ActionError("Node not belongs to user")
+    return True
 
 
 def modify_node(user_name: str, node_id: str, node_info: dict):
@@ -117,4 +143,3 @@ def delete_node(user_name: str, node_id: str):
     # 删除节点
     update_node(node_path, b"")
     return dict()
-
