@@ -115,3 +115,20 @@ server.3=localhost:2890:3890
 ```
 且每个server都需要拥有单独的dataDir(快照目录, 记得在其目录配置myid)和不通的clientPort, 这种测试的话单个
 server挂掉的话会导致整个集群都挂掉.
+
+
+## Supervisor脚本
+```bash
+[program:ZooKeeper1] ;
+user=root ; 进程运行的用户身份　　　　　
+directory=/home/swh/ZooKeeper/zookeeper-3.4.12/bin ; 程序所在路径
+command=sudo ./zkServer.sh start-foreground zoo1.cfg ;
+stderr_logfile=/home/swh/ZooKeeper/runlog/err.log ; 错误日志保存路径
+stdout_logfile=/home/swh/ZooKeeper/runlog/zk.log ; 输出日志保存路径
+stdout_logfile_maxbytes = 20MB
+stdout_logfile_backups = 3
+autostart=True
+autorestart=False
+startsecs=5 ; 启动时间5秒后无异常则表明成功启动
+startretries=0 ; 启动失败重启次数, 默认为3
+```
