@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/gin-gonic/gin.svg)](https://travis-ci.org/gin-gonic/gin)
 [![Join the chat at https://gitter.im/gin-gonic/gin](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/gin-gonic/gin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## [Kafka(包含zk)详解](doc/Kafka.md)
+## [ZooKeeper getting start](doc/ZooKeeperNote.md)
 
 
 ## [Django项目新建步骤](doc/web%20base.md)
