@@ -104,7 +104,7 @@ def verify_node_by_path(user_name: str, password: str, node_path: str):
     if user.password != password:
         raise ActionError("password error")
     user_id = user.user_id
-    node = Node.objects.get(node_path=node_path)
+    node = Node.objects.filter(node_path=node_path).first()
     if not node:
         raise ActionError("Node Path Not Exist")
     node_id = node.node_id

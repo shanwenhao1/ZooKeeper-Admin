@@ -56,6 +56,7 @@ class ZkTest(TestCase):
         另一种是采用sqlite3, 配置在settings.py内, 命令为: python manage.py test test.zk_test.ZkTest
     https://docs.djangoproject.com/en/dev/topics/testing/overview/
     """
+
     def setUp(self):
         self.url = "http://localhost:8081/zk_node/"
         self.username, self.password, self.zk_path, self.node_id = mock_data()
