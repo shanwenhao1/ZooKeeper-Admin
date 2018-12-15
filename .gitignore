@@ -10,7 +10,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 .idea/
-zkWeb/template_app/
+zkWeb/App/migrations
 env/
 build/
 develop-eggs/
