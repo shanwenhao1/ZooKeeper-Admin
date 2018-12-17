@@ -157,6 +157,7 @@ Kerberos原理:
     
     # 开启client之间的验证
     authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider
+    requireClientAuthScheme=sasl
     jaasLoginRenew=3600000
     ```
 - 在zk conf目录下创建java.env文件
