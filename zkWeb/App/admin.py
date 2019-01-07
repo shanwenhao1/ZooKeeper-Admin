@@ -6,10 +6,10 @@
 #            http://djangobook.py3k.cn/2.0/chapter10/
 
 from django.contrib import admin
+from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import User as DUser
 from zkWeb.App.models import User, UserNode, Node
 from zkControl.control import create_node, delete_node
-from zktool.url_parse import parse_url_path
 
 admin.site.site_header = "ZooKeeper管理后台"
 admin.site.site_title = "ZK管理"
@@ -51,13 +51,24 @@ class UserAdmin(admin.ModelAdmin):
         password = request.POST.get("password")
         email = request.POST.get("email")
         obj.save()
-        DUser.objects.create_user(username=user_name, password=password, email=email)
+        # Django新建用户
+        user = DUser.objects.filter(username=user_name)
+        if not user:
+            DUser.objects.create_user(username=user_name, password=password, email=email)
+        else:
+            user = user[0]
+            if not check_password(password, user.password) or user.email != email:
+                # 密码存入的是hash加密后的
+                user.password = make_password(password)
+                user.email = email
+                user.save()
 
     # 重载delete, 添加删除django user表数据
     def delete_model(self, request, obj):
         user_name = obj.user_name
         obj.delete()
-        DUser.objects.get(username=user_name).delete()
+        if DUser.objects.filter(username=user_name):
+            DUser.objects.get(username=user_name).delete()
 
 
 class NodeUserInline(admin.TabularInline):
@@ -79,8 +90,10 @@ class NodeAdmin(admin.ModelAdmin):
     # 重载save, 添加创建zk_node
     def save_model(self, request, obj, form, change):
         node_path = request.POST.get("node_path")
+        is_create = True if not Node.objects.filter(node_path=node_path) else False
         obj.save()
-        create_node(node_path)
+        if is_create:
+            create_node(node_path)
 
     # 重载delete, 添加删除zk_node
     def delete_model(self, request, obj):

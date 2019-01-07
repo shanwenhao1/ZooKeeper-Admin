@@ -6,6 +6,7 @@
 
 import log
 import json
+from django.db import transaction
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.core.mail import send_mail
@@ -120,6 +121,7 @@ def logout_zk(request):
     return render(request, "Home.html")
 
 
+@transaction.atomic
 def register(request):
     """
     注册模块
@@ -177,6 +179,7 @@ def register(request):
     return render(request, "register.html", context)
 
 
+@transaction.atomic
 def zk(request):
     """
     zk控制台
