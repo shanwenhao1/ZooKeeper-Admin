@@ -14,7 +14,11 @@
 - [2](https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZooKeeper+and+SASL)
 
 Kerberos原理:
-- [1](https://blog.csdn.net/wulantian/article/details/42418231)
+- [kerberos认证原理](https://blog.csdn.net/wulantian/article/details/42418231)
+- [kerberos入坑指南](https://www.jianshu.com/p/fc2d2dbd510b)
+
+Kerberos安装:
+- [1](http://web.mit.edu/kerberos/krb5-1.14/doc/admin/install_kdc.html)
 
 他人博客:
 - [1](https://blog.csdn.net/bugzeroman/article/details/82457832)
@@ -31,7 +35,8 @@ Kerberos原理:
 
 - 下载安装kerberos server
     ```bash
-    sudo apt-get install krb5-kdc krb5-admin-server
+    # krb5-kdc: kdc主程序, krb5-admin-server: kdc管理员程序, krb5-user: kerberos一些客户端命令
+    sudo apt-get install krb5-kdc krb5-admin-server krb5-user krb5-config
     ```
     - 查看config files, 可根据自己的需求编辑
         - reconfigure realm(自动创建示例配置文件)
@@ -39,30 +44,52 @@ Kerberos原理:
         sudo dpkg-reconfigure krb5-kdc
         ```
         - 检查/etc/krb5kdc/kdc.conf
-        - 修改/etc/krb5.conf
+        ```bash
+        [kdcdefaults]
+            kdc_ports = 750,88
+        
+        [realms]
+            EXAMPLE.COM = {
+                database_name = /var/lib/krb5kdc/principal
+                admin_keytab = FILE:/etc/krb5kdc/kadm5.keytab
+                acl_file = /etc/krb5kdc/kadm5.acl
+                key_stash_file = /etc/krb5kdc/stash
+                kdc_ports = 750,88
+                max_life = 10h 0m 0s
+                max_renewable_life = 7d 0h 0m 0s
+                master_key_type = des3-hmac-sha1
+                supported_enctypes = aes256-cts:normal aes128-cts:normal
+                default_principal_flags = +preauth
+            }
+        ```
+        - 修改/etc/krb5.conf(实际配置的时候请将注释删除)
             ```bash
-                [logging]
-                 default = FILE:/home/swh/Kerberos/log/krb5libs.log
-                 kdc = FILE:/home/swh/Kerberos/log/krb5kdc.log
-                 admin_server = FILE:/home/swh/Kerberos/log/kadmind.log
-                
-                [libdefaults]
-                 default_realm = EXAMPLE.COM
-                 dns_lookup_realm = false
-                 dns_lookup_kdc = false
-                 ticket_lifetime = 24h
-                 renew_lifetime = 7d
-                 forwardable = true
-                
-                [realms]
-                 EXAMPLE.COM = {
-                  kdc = localhost
-                  admin_server = localhost
-                 }
-                
-                [domain_realm]
-                 .example.com = EXAMPLE.COM
-                 example.com = EXAMPLE.COM
+            [logging]
+             default = FILE:/home/swh/Kerberos/log/krb5libs.log
+             kdc = FILE:/home/swh/Kerberos/log/krb5kdc.log
+             admin_server = FILE:/home/swh/Kerberos/log/kadmind.log
+            
+            [libdefaults]
+             default_realm = EXAMPLE.COM            // 默认的domain
+             dns_lookup_realm = false               // 不走DNS(需要将机器的域名解析相互配置到/etc/hosts文件中)
+             dns_lookup_kdc = false                 
+             ticket_lifetime = 24h                  // ticket 过期时间
+             renew_lifetime = 7d                    // ticket 可延期的时间, 配置为7天, 默认为0
+             forwardable = true                     // ticket是否可转发. 最严格的限制点在服务端的配置
+            
+            [realms]
+             EXAMPLE.COM = {
+              kdc = localhost:88                    // kdc服务器, 如果是master/slave模式, 则重复的多写几行
+              admin_server = localhost              // kdc主服务器
+             }
+            
+            // 以下测试可不采用
+            [domain_realm]
+            .example.com = EXAMPLE.COM              // 所有.example.com域的用户和机器都可以在EXAMPLE.COM上认证
+             kafka = EXAMPLE.COM
+             zookeeper = EXAMPLE.COM
+             192.168.1.89 = EXAMPLE.COM
+             127.0.0.1 = EXAMPLE.COM
             ```
     - 创建new realm
         ```bash
@@ -81,14 +108,15 @@ Kerberos原理:
             ```bash
             sudo kinit -k -t /etc/krb5.keytab test/admin
             ```
-    - 编写Kerberos访问控制列表ACL文件/etc/krb5kdc/kadm5.acl, 加入以下配置
+    - 编写Kerberos访问控制列表ACL文件/etc/krb5kdc/kadm5.acl(允许所有admin用户可远程修改), 加入以下配置
         ```bash
-        test/admin@EXAMPLE.COM  *
+        */admin@EXAMPLE.COM  *
         ```
     - 常用命令, [各文件意义](https://docs.oracle.com/cd/E24847_01/html/819-7061/setup-9.html)
         - 重启krb服务
         ```bash
-        sudo /etc/init.d/krb5-admin-server restart
+        sudo service krb5-kdc restart 或 sudo /etc/init.d/krb5-kdc restart
+        sudo service krb5-admin-server restart 或 sudo /etc/init.d/krb5-admin-server restart
         ```
         - klist 命令查看kinit 向kdc服务获取TGT的状态
         
