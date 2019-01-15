@@ -32,7 +32,7 @@ SECRET_KEY = 'vunfukbfdor=ivuth93fr*m#-vg-xj%ftft!ql(4=#b5wpi6s_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.1.93", "localhost"]
+ALLOWED_HOSTS = ["192.168.1.94", "localhost"]
 
 # 设置邮箱地址
 EMAIL_HOST = 'smtp.gmail.com'

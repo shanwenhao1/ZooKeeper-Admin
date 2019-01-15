@@ -79,8 +79,8 @@ Kerberos安装:
             
             [realms]
              EXAMPLE.COM = {
-              kdc = localhost:88                    // kdc服务器, 如果是master/slave模式, 则重复的多写几行
-              admin_server = localhost              // kdc主服务器
+              kdc = 192.168.1.89                    // kdc服务器, 如果是master/slave模式, 则重复的多写几行
+              admin_server = 192.168.1.89           // kdc主服务器
              }
             
             // 以下测试可不采用
@@ -90,6 +90,7 @@ Kerberos安装:
              zookeeper = EXAMPLE.COM
              192.168.1.89 = EXAMPLE.COM
              127.0.0.1 = EXAMPLE.COM
+             GSSAPI = EXAMPLE.COM
             ```
     - 创建new realm
         ```bash
@@ -132,13 +133,17 @@ Kerberos安装:
 每个zk节点创建一个server principal, client可以选择只创建一份)
 - bash 命令
     ```bash
-    #　单个节点的server pricipal创建(这边偷懒没有每个节点创建一个)
+    #　单个节点的server principal创建(这边偷懒没有每个节点创建一个)
     addprinc -randkey zookeeper/192.168.1.89
-    ktadd -k /home/swh/ZooKeeper/zookeeper-3.4.12/zookeeper.keytab zookeeper/192.168.1.89
     
-    # 客户端pricipal创建
+    # 客户端principal创建
     addprinc -randkey zkClient
-    ktadd -k /home/swh/ZooKeeper/zookeeper-3.4.12/zkClient.keytab zkClient
+    
+    # 创建kafka的pricnipal
+    addprinc -randkey kafka/192.168.1.89
+    
+    # 将principle写入all.keytab中
+    ktadd -k /home/swh/Kerberos/all.keytab kafka/192.168.1.89 zookeeper/192.168.1.89 zkClient
     ```
     使用scp命令将keytab文件拷贝至每个zk节点对应的zk目录下
     ```bash
@@ -189,24 +194,24 @@ Kerberos安装:
     jaasLoginRenew=3600000
     ```
 - 在zk conf目录下创建java.env文件
-```bash
-export JVMFLAGS="-Djava.security.auth.login.config=/home/swh/ZooKeeper/zookeeper-3.4.12/conf/zk_jaas.conf"
-```
+    ```bash
+    export JVMFLAGS="-Djava.security.auth.login.config=/home/swh/ZooKeeper/zookeeper-3.4.12/conf/zk_jaas.conf"
+    ```
 - 在zk conf目录下创建java.env配置中的zk_jaas.conf文件
     ```bash
     Server {
            com.sun.security.auth.module.Krb5LoginModule required
            useKeyTab=true
-           keyTab="/home/swh/ZooKeeper/zookeeper-3.4.12/zookeeper.keytab"
+           keyTab="/home/swh/ZooKeeper/zookeeper-3.4.12/all.keytab"
            storeKey=true
            useTicketCache=false
-           principal="zookeeper/192.168.1.89";
+           principal="zookeeper/192.168.1.89@EXAMPLE.COM";
     };
     Client {
            com.sun.security.auth.module.Krb5LoginModule required
            useKeyTab=true
-           keyTab="/home/swh/ZooKeeper/zookeeper-3.4.12/zkClient.keytab"
-           principal="myzkclient"
+           keyTab="/home/swh/ZooKeeper/zookeeper-3.4.12/all.keytab"
+           principal="zkClient@EXAMPLE.COM"
            useTicketCache=false
            debug=true;
     };

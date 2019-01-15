@@ -7,7 +7,7 @@
 import os
 import sys
 
-HOST = "localhost:8081"
+HOST = "192.168.1.94:8081"
 
 
 def run():
