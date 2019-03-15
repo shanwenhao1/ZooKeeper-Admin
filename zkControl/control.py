@@ -43,9 +43,6 @@ def create_node(node_path: str, node_data: b""=b""):
     """
     with ZK.transaction():
         try:
-            # 由于ZooKeeper的权限控制是节点级别的, 且不继承. 在创建节点时使用acl参数添加权限控制
-            # 相应的加权限后, 访问节点都需要认证
-            # TODO 添加权限控制
             ZK.create(node_path, node_data)
         except Exception as e:
             if type(e) == NodeExistsError:

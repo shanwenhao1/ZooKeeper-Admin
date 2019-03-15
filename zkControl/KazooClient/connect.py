@@ -6,8 +6,12 @@
 import log
 from zktool.enum.log_enum import KazooStatus
 from kazoo.client import KazooClient, KazooState
+from kazoo.security import make_digest_acl
 
 Zk_Address = '192.168.1.89:2181'
+
+ACL_MY = make_digest_acl(username="your name", password="your password", read=True, write=True,
+                         create=True, delete=True, admin=True, all=True)
 
 
 class ZKClientAsync(KazooClient):
@@ -25,7 +29,10 @@ class ZKClientAsync(KazooClient):
                                             logger, **kwargs)
 
 
-ZK = KazooClient(hosts=Zk_Address)
+# 由于ZooKeeper的权限控制是节点级别的, 且不继承. 在创建节点时使用acl参数添加权限控制, 相应的加权限后, 访问节点都需要认证.
+# 如果考虑要在用户层面加上权限控制的话, 那可以使用用户的name 和password进行acl 控制, 但需注意的是删除主用户是需把对应
+# node也删掉, 以免造成垃圾数据无法清除.
+ZK = KazooClient(hosts=Zk_Address, default_acl=[ACL_MY], auth_data=[("digest", "your name:your password")])
 
 
 @ZK.add_listener
