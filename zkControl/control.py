@@ -149,5 +149,14 @@ if __name__ == '__main__':
     # print(de_json(create_node("/test/another_create", b_json)))
     # # delete_node(nod_path)
     # # print(de_json(get_node("/test/another_create")))
-    # delete_node("/test/another_create")
-    # print(get_children("/"))
+    # need_delete = ['zookeeper', 'test', 'kafka-acl', 'kafka-acl-changes', 'admin', 'isr_change_notification',
+    #     #                'log_dir_event_notification', 'controller_epoch', 'kafka-acl-extended', 'kafka-acl-extended-changes',
+    #     #                'consumers', 'latest_producer_id_block', 'config']
+    #     # for node in need_delete:
+    #     #     node_path = "/" + node
+    #     #     print("-------------", node_path)
+    #     #     try:
+    #     #         delete_node(node_path)
+    #     #     except:
+    #     #         pass
+    print(get_children("/"))

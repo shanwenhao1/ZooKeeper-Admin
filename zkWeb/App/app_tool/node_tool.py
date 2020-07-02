@@ -89,22 +89,15 @@ def verify_node(user_name: str, node_id: str):
     return node_record
 
 
-def verify_node_by_path(user_name: str, password: str, node_path: str):
+def verify_node_by_path(user: User, node_name: str):
     """
     根据user_name和node_path判断用户是否具有对应节点权限
-    :param user_name:
-    :param password:
-    :param node_path:
+    :param user:
+    :param node_name:
     :return:
     """
-    user = User.objects.filter(user_name=user_name).first()
-    if not user:
-        log.tag_info(DbStatus.Inquire, "User: %s not Exist In table user" % user_name)
-        raise ActionError("User not exist")
-    if user.password != password:
-        raise ActionError("password error")
     user_id = user.user_id
-    node = Node.objects.filter(node_path=node_path).first()
+    node = Node.objects.filter(node_name=node_name).first()
     if not node:
         raise ActionError("Node Path Not Exist")
     node_id = node.node_id
@@ -112,7 +105,7 @@ def verify_node_by_path(user_name: str, password: str, node_path: str):
     all_node_id = [user_node.node_id for user_node in all_user_node]
     if node_id not in all_node_id:
         raise ActionError("Node not belongs to user")
-    return True
+    return node.node_path
 
 
 def modify_node(user_name: str, node_id: str, node_info: dict):

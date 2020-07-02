@@ -11,8 +11,8 @@ from django.contrib.auth.models import User as DUser
 from zkWeb.App.models import User, UserNode, Node
 from zkControl.control import create_node, delete_node
 
-admin.site.site_header = "ZooKeeper管理后台"
-admin.site.site_title = "ZK管理"
+admin.site.site_header = "控王ZooKeeper管理后台"
+admin.site.site_title = "控王ZK管理"
 
 
 class UserNodeInline(admin.TabularInline):

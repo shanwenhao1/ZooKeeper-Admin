@@ -5,11 +5,11 @@
 
 import json
 from django.http import request
-import unittest
 from django.test import TestCase
+from utils.md5 import md5_check
+from utils.time_utils import get_now_time_timestamp
 from zkControl.control import create_node, delete_node
 from zktool.code_tool.encode import en_json
-from zktool.code_tool.decode import de_json
 from zkWeb.App.models import User, UserNode, Node
 from zkWeb.App.views import zk_info as zookeeper
 
@@ -33,7 +33,7 @@ def mock_data():
     node = Node.objects.create(node_path=zk_path, node_name="test_node")
     user = User.objects.create(user_name=username, password=password)
     UserNode.objects.create(node_id=node.node_id, user_id=user.user_id)
-    return username, password, zk_path, node.node_id
+    return username, password, "test_node", node.node_id
 
 
 def delete_mock_data(username: str, zk_path: str, node_id: str):
@@ -44,7 +44,7 @@ def delete_mock_data(username: str, zk_path: str, node_id: str):
     # 删除节点
     delete_node(zk_path)
     # 数据库测试数据可以不用删除, 因为测试完成后, django自动将测试数据库删除掉了
-    # Node.objects.get(node_path=zk_path).delete()
+    # Node.objects.get(node_path=zk_name).delete()
     # User.objects.get(user_name=username).delete()
 
 
@@ -59,20 +59,23 @@ class ZkTest(TestCase):
 
     def setUp(self):
         self.url = "http://localhost:8081/zk_node/"
-        self.username, self.password, self.zk_path, self.node_id = mock_data()
+        self.username, self.password, self.zk_name, self.node_id = mock_data()
 
     def tearDown(self):
-        delete_mock_data(self.username, self.zk_path, self.node_id)
+        delete_mock_data(self.username, self.zk_name, self.node_id)
 
     def test_zk_info(self):
         """
         测试获取zk信息
         :return:
         """
+        timestamp = get_now_time_timestamp(utc=True)
+        md5 = md5_check(self.password, timestamp)
         req_data = {
             "username": self.username,
-            "password": self.password,
-            "zkPath": self.zk_path
+            "md5": md5,
+            "timestamp": timestamp,
+            "zkPath": self.zk_name
         }
         # 手动构建request
         req = request.HttpRequest()
@@ -82,4 +85,4 @@ class ZkTest(TestCase):
         resp = zookeeper(req)
         zk_info = json.loads(resp.content)
         self.assertEqual(zk_info["status"], 0), "测试获取zk信息失败!!!"
-        self.assertEqual(zk_info["zkData"]["test"], 123), "测试获取zk失败, zk数据错误!!!"
+        self.assertEqual(zk_info["obj"]["test"], 123), "测试获取zk失败, zk数据错误!!!"

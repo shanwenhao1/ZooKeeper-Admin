@@ -10,13 +10,32 @@ from dateutil import parser
 from utils.error import ActionError
 
 
-def get_now_time(need_ms=False):
+def get_now_time(need_ms=False, utc=False):
     """获取当前时间current time
-    @:param needMs bool 如果为True,则保留毫秒,否则毫秒置为0
+    :param need_ms: bool 如果为True,则保留毫秒,否则毫秒置为0
+    :param utc: 是否需要utc
     """
+    if not utc:
+        now_time = datetime.datetime.now() if need_ms else datetime.datetime.now().replace(microsecond=0)
+    else:
+        now_time = datetime.datetime.now(datetime.timezone.utc) if need_ms \
+            else datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
+    return now_time
+
+
+def get_now_time_timestamp(need_ms=False, utc=False):
+    """
+    获取当前时间timestamp值
+    :param need_ms: 为True时保留毫秒
+    :param utc: need utc timestamp or not
+    :return:
+    """
+    now_time = get_now_time(need_ms=need_ms, utc=utc)
     if need_ms:
-        return datetime.datetime.now()
-    return datetime.datetime.now().replace(microsecond=0)
+        timestamp = int(now_time.timestamp() * 1000)
+    else:
+        timestamp = int(now_time.timestamp())
+    return timestamp
 
 
 def get_int_time(last_time=0):

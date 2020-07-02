@@ -135,3 +135,23 @@ function jsonDisplay(json, btnId) {
     }
     editor.destroy();
 }
+
+function docJsonDisplay(json, id) {
+    var options = {
+        mode: 'tree',
+        modes: ['code', 'form', 'text', 'tree', 'view'], // allowed modes
+        onError: function (err) {
+          alert(err.toString());
+        },
+        onModeChange: function (newMode, oldMode) {
+          console.log('Mode switched from', oldMode, 'to', newMode);
+        }
+    };
+    var pre = document.getElementById(id);
+    // 调用jsonEditor保存json数据
+    // var editorJson = JSON.parse(JSON.stringify(json, null, 2));
+    var editor = new JSONEditor(pre, options, json);
+    var newHtml = syntaxHighlight(editor.get());
+    pre.innerHTML = "<td colspan='4'><pre contenteditable='false'><code>" + newHtml + "</code></pre></td>";
+    editor.destroy();
+}

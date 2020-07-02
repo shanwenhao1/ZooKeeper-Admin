@@ -50,9 +50,9 @@
             <div class="row">
                 {% block HomeLeft %}
                     <div class="col-sm-8">
-                        <h1>ZK管理</h1>
+                        <h1>控王ZK管理</h1>
                             <h1> test</h1>
-                        <p>ZK主要是用来支持在线分布式配置文件.</p>
+                        <p>控王ZK主要是用来支持在线分布式配置文件.</p>
                         {% if not request.user.is_authenticated %}
                             <p>
                                 <a class="btn btn-lg btn-primary" href="{% url 'auth_login' %}" role="button">登录</a>
@@ -87,3 +87,49 @@
     <div class="content">
     </div>
 {% endblock %}
+{#{% block content %}#}
+{#<div class="log">#}
+{#    {% if request.user.is_authenticated %}#}
+{#        {% if queryset and queryset1 %}#}
+{#            <h2>Welcome {{ queryset }}</h2>#}
+{#            <h1>You are logged in!</h1>#}
+{#            <!--以table的形式显示</br>是换行-->#}
+{#            <table class="table">#}
+{#                {% for instance in queryset1 %}#}
+{#                    <tr><td>{{ instance.full_name}}</td><td>{{ instance.email }}</td><td>{{ instance.timestamp|timesince }}</td></tr>#}
+{#                {% endfor %}#}
+{#            </table>#}
+{#        {% endif %}#}
+{##}
+{#        {% if queryset and not queryset1 %}#}
+{#            <h2>Welcome {{ queryset }}</h2>#}
+{#            <h1>You are signed in!</h1>#}
+{#        {% endif %}#}
+{##}
+{#    {% else %}#}
+{#        <!--调节输入框格式,靠调节col-md-3中的数字来调节长度,col-xs-3表示相对页面始终是一定大小-->#}
+{#        <div class="row">#}
+{#            <!--pull-right表示將以下的內容放在偏右方-->#}
+{#            <div class="col-sm-12">#}
+{#                {% if PleaseLogin %}#}
+{#                    <div class="col-sm-12 pull-left">#}
+{#                            <h1>Dear visitors, Welcome to our Web !! please log in to go into our system</h1>#}
+{#                            <!--以table的形式显示</br>是换行-->#}
+{#                    </div>#}
+{#                {% else %}#}
+{#                    <!--template_title在view2.py中调用时给出-->#}
+{#                    <div class="col-sm-3 pull-right">#}
+{#                        <p class="lead text-align-center">{{ template_title }}</p>#}
+{##}
+{#                        <form method='POST' action=''>{% csrf_token %}#}
+{#                        {{ form|crispy }}#}
+{##}
+{#                        <button class='btn btn-primary',type='submit' value='Sign Up' />Sign Up</button>#}
+{#                        </form>#}
+{#                    </div>#}
+{#                {% endif %}#}
+{#            </div>#}
+{#        </div>#}
+{#    {% endif %}#}
+{#</div>#}
+{#{% endblock %}#}

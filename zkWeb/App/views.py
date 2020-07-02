@@ -14,12 +14,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User as DUser
 from utils.error import ActionError
 from utils.word_check import pass_word_check
+from utils.md5 import md5_check_in_time
+from zktool.err_handle import action_err
+from zktool.enum.log_enum import DjangoStatus, DbStatus
+from zktool.enum.web_enum import WebErr, WebReq, WebResp
 from zkWeb.App.models import User
 from zkWeb.App.form.contact_form import ContactForm
 from zkWeb.settings import EMAIL_HOST_USER
 from zkWeb.App.app_tool.node_tool import get_person_all_node, modify_node, delete_node, verify_node_by_path, get_node_by_path
-from zktool.enum.log_enum import DjangoStatus
-from zktool.enum.web_enum import WebErr, WebReq, WebResp
 
 # 只有templates文件夹配置在settings.py中, get_template才能获取到相应的html.
 
@@ -30,7 +32,7 @@ def home(request):
     :param request:
     :return:
     """
-    return render(request, "Home.html")
+    return render(request, "home.html")
 
 
 def about(request):
@@ -85,6 +87,16 @@ def contact(request):
     return render(request, "contact.html", context)
 
 
+def doc(request):
+    """
+    文档
+    :param request:
+    :return:
+    """
+    context = dict()
+    return render(request, "doc.html", context)
+
+
 def login_zk(request):
     """
     登录
@@ -118,7 +130,7 @@ def logout_zk(request):
     :return:
     """
     logout(request)
-    return render(request, "Home.html")
+    return render(request, "home.html")
 
 
 @transaction.atomic
@@ -214,6 +226,7 @@ def zk(request):
 
 
 # TODO 将zkAdmin 与查询zk服务分离, zkAdmin只允许内网访问(或者设置白名单)
+@action_err
 def zk_info(request):
     """
     获取zk节点信息
@@ -221,18 +234,30 @@ def zk_info(request):
     :return:
     """
     context = dict()
-    user_name = request.POST.get('username')
-    password = request.POST.get('password')
-    zk_path = request.POST.get('zkPath')
     try:
-        verify_node_by_path(user_name, password, zk_path)
-    except ActionError as e:
-        context["errMsg"] = e.__str__()
-        context["status"] = WebResp.ActionErr
-        return HttpResponse(json.dumps(context))
+        user_name = request.POST.get('username')
+        # password + timestamp 生成的md5校验
+        md5 = request.POST.get('md5')
+        timestamp = request.POST.get("timestamp")
+        zk_name = request.POST.get('zkName')
+    except:
+        raise ActionError("parameter error")
+    if type(timestamp) is not str and type(timestamp) is not float:
+        raise ActionError("parameter error")
+
+    user = User.objects.filter(user_name=user_name).first()
+    if not user:
+        log.tag_info(DbStatus.Inquire, "User: %s not Exist In table user" % user_name)
+        raise ActionError("User not exist")
+    if type(timestamp) is str:
+        timestamp = float(timestamp)
+    if not md5_check_in_time(md5, user.password, int(timestamp)):
+        raise ActionError("MD5校验失败")
+    # 验证node是否属于该用户
+    zk_path = verify_node_by_path(user, zk_name)
     # 获取zk节点信息
     zk_node = get_node_by_path(zk_path)
-    context["zkData"] = zk_node
+    context["obj"] = zk_node
     context["status"] = WebResp.ActionSuccess
     context["errMsg"] = ""
     return HttpResponse(json.dumps(context))

@@ -20,8 +20,8 @@ Including another URLconf
 """
 from django.conf.urls.static import static
 from django.conf import settings
-from django.urls import path, include
-from zkWeb.App.views import home, register, about, contact, login_zk, logout_zk, zk, zk_info
+from django.urls import path
+from zkWeb.App.views import home, register, about, contact, login_zk, logout_zk, zk, zk_info, doc
 from zkWeb.App.admin import admin
 
 admin.autodiscover()
@@ -37,6 +37,7 @@ urlpatterns = [
     path(r'home/', home, name='home'),
     path(r'about/', about, name='about'),
     path(r'contact/', contact, name='contact'),
+    path(r'doc/', doc, name='doc'),
     path(r'zk/', zk, name="zk"),
     # post请求获取节点信息, 目前使用明文密码, 后续考虑使用md5加密
     path(r'zk_node/', zk_info, name="zk_node"),

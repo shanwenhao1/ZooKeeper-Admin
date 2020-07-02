@@ -1,0 +1,128 @@
+<!--继承base.html-->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+<!--block.super继承-->
+{% block head_title %} {{ block.super }} {% endblock %}
+
+<style xmlns="http://www.w3.org/1999/html">
+{% block style %}
+    .navbar-static-end{
+        margin-bottom: 0px !important;
+    }
+    .row{
+        margin-top: -20px;
+        background-color: #4d5a37;
+        color: #e6ff2d;
+        min-height: 436px;
+    }
+{% endblock %}
+</style>
+
+{% block content %}
+    <div class="row">
+        {#导入json显示的js#}
+        <script type="text/javascript" src="{% static 'my_static/js/json.js' %}"></script>
+        {# 导入第三方json工具 https://github.com/josdejong/jsoneditor#}
+        <link href="{% static 'static_root/jsoneditor/dist/jsoneditor.min.js' %}" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="{% static 'static_root/jsoneditor/dist/jsoneditor.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'static_root/jsoneditor/dist/jsoneditor-minimalist.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'static_root/jsoneditor/dist/img/jsoneditor-icons.svg' %}"></script>
+        {% if not request.user.is_authenticated %}
+            <div style="color: #ff8c00;" class="col-sm-offset-1">
+                <h1 align="center"><font size="6">请登录!</font></h1>
+            </div>
+        {% else %}
+            <div style="color: #ff8c00;" class="col-sm-offset-1">
+                <h1 align="center"><font size="6">控王Zookeeper说明文档</font></h1>
+
+                <br/>
+                <h2><font size="5">Ⅰ.用前须知</font></h2>
+
+                    <ul class="col-sm-offset-1">
+                        <li>使用前请先注册账户, 如果已有账户则需登录</li>
+                        <li>如果没有相关节点权限, 请联系管理员分配node</li>
+                        <li>使用前, 如有兴趣可了解Zookeeper帮助你更加熟练使用, <a href="https://zookeeper.apache.org/doc/current/index.html">官方文档</a></li>
+                    </ul>
+
+                <br/>
+                <h2><font size="5">Ⅱ.Zookeeper使用说明</font></h2>
+
+                    <p class="col-sm-offset-1">
+                        本项目作为控王科技的config查询系统, 目标是提供一个实时在线更改、查询config的服务. 可以支持一些服务,
+                        如不重启更改配置修改服务.
+                    </p>
+
+                <br/>
+                <h3 class="col-sm-offset-1"><font size="4">a.在线修改配置</font></h3>
+
+                <br/>
+                <div class="col-sm-offset-2">
+                    <p>登录用户拥有相应节点权限之后就可进行使用相应的节点信息以满足业务需求了</p>
+
+                    <ul>
+                        <li>首先, 登录账户后, 主页上会有一个<code>zk</code>按钮. 如下图: <img alt="" src="{% static 'my_static/img/doc/1.png' %}"/></li>
+                        <br/>
+                        <li>点开后就可以看到相应节点存储的信息, 可以选择编辑或者修改. 目前只支持json格式. 如下图: <img alt="" src="{% static 'my_static/img/doc/2.png' %}"/></li>
+                    </ul>
+                </div>
+
+                <br/>
+                <h3 class="col-sm-offset-1"><font size="4">b.获取节点配置的接口</font></h3>
+
+                <br/>
+                <div class="col-sm-offset-2">
+                    <p>1. 请求地址: /zk_node/</p>
+
+                    <br/>
+                    <p>2.请求格式:</p>
+                    <div class="col-sm-offset-1">
+                        <table class="col-sm-12">
+                            <tr><td>参数</td><td>类型</td><td>参数说明</td></tr>
+                            <tr><td>username</td><td>str</td><td>用户名称</td></tr>
+                            <tr><td>md5</td><td>str</td><td>password + timestamp 生成的md5</td></tr>
+                            <tr><td>timestamp</td><td>int</td><td>生成md5的时间戳</td></tr>
+                            <tr><td>zkName</td><td>str</td><td>节点名称</td></tr>
+                            <tr id="doc_request">
+                                <script type="text/javascript">
+                                    var request = {
+                                        "username": "",
+                                        "md5": "",
+                                        "timestamp": 12334546,
+                                        "zkName": ""
+                                    };
+                                    docJsonDisplay(request, "doc_request");
+                                </script>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <br/>
+                    <p>3.返回格式:</p>
+                    <div class="col-sm-offset-1">
+
+                        <table class="col-sm-12">
+                            <tr><td>参数</td><td>类型</td><td>参数说明</td></tr>
+                            <tr><td>status</td><td>int</td><td>请求是否成功, 0: 成功</td></tr>
+                            <tr><td>errMsg</td><td>str</td><td>错误信息</td></tr>
+                            <tr><td>obj</td><td>json</td><td>节点存储的配置信息</td></tr>
+                            <tr id="doc_response"></tr>
+                             <script type="text/javascript">
+                                var resp = {
+                                    "status": 0,
+                                    "errMsg": "",
+                                    "obj": {}
+                                };
+                                docJsonDisplay(resp, "doc_response");
+                             </script>
+                        </table>
+                    </div>
+                </div>
+
+                <h2><font size="5">Ⅲ.负责人</font></h2>
+                    <br/>
+                    <p class="col-sm-offset-1">负责人: 单文浩  联系方式: 761542858(QQ)</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Time    : 2018/11/28
+# @Time    : 2018/10/10
 # @Author  : Wenhao Shan
 
 """
@@ -32,12 +32,17 @@ SECRET_KEY = 'vunfukbfdor=ivuth93fr*m#-vg-xj%ftft!ql(4=#b5wpi6s_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.1.94", "localhost"]
+ALLOWED_HOSTS = ["192.168.1.89", "localhost"]
 
 # 设置邮箱地址
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'test@gmail.com'
-EMAIL_HOST_PASSWORD = '******'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'test@gmail.com'
+# EMAIL_HOST_PASSWORD = '******'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_HOST_USER = 'swh-email@qq.com '
+EMAIL_HOST_PASSWORD = 'ufjvyzgaatgzbahe'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -51,7 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',                                             # 此为我添加的third party apps
-    # 'django.contrib.sites',                                   # django登录相关, https://stackoverflow.com/questions/9736975/django-admin-doesnotexist-at-admin
+    # 'django.contrib.sites',                                     # django登录相关, https://stackoverflow.com/questions/9736975/django-admin-doesnotexist-at-admin
     # 'zkWeb.template_app.Templates.registration',              # 注册登录相关的html文件
     'zkWeb.App',
     'zkWeb.template_app',
@@ -110,7 +115,7 @@ DATABASES = {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'your_zk',
+        'NAME': 'kw_zk',
         'USER': 'root',
         'PASSWORD': '123456',
         'HOST': '192.168.1.89',

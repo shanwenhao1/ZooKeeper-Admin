@@ -27,7 +27,7 @@
 ## ZooKeeper
 
 账户: root
-密码: *******
+密码: kw_zk123
 本项目使用Python3 + Django实现
 
 ZooKeeper方面使用Kazoo连接管理zookeeper, [Kazoo笔记](doc/Kazoo.md)
